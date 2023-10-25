@@ -45,6 +45,7 @@ def login_to_facebook(username, password):
         # Memastikan berada di halaman setelah login
         if "login" not in driver.current_url:
             print("Login berhasil!")
+            print("akun " + username)
             return driver
         else:
             print("Login gagal!")
@@ -60,58 +61,169 @@ def like_and_comment_on_facebook_post(driver, post_url, comments):
     try:
         driver.get(post_url)
 
-        # Menunggu hingga halaman selesai dimuat
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Suka')]")))
+        like_button = None
+        comment_button = None
 
-        like_button = driver.find_element(By.XPATH, "//span[contains(text(), 'Suka')]")
+        # Coba menemukan tombol "Suka" dengan teks dalam bahasa Inggris
+        try:
+            like_button = driver.find_element(By.XPATH, "//span[contains(text(), 'Suka')]")
+        except NoSuchElementException:
+            pass
+
+        # Jika tombol "Suka" dalam bahasa Inggris tidak ditemukan, coba dalam bahasa Indonesia
+        if like_button is None:
+            try:
+                like_button = driver.find_element(By.XPATH, "//span[contains(text(), 'Like')]")
+            except NoSuchElementException:
+                # Jika tidak berhasil, coba mencari tombol lain
+                like_button = driver.find_element(By.XPATH, "//a[contains(@data-sigil, 'ufi-inline-like')]")
+
         like_button.click()
         print(Fore.GREEN + "Postingan telah dilike!" + Style.RESET_ALL)
-        
-        # Tunggu 2 detik
+
         time.sleep(2)
 
-        # Menunggu hingga tombol "Komentari" muncul
-        WebDriverWait(driver, 4).until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Komentari')]")))
+        # Coba menemukan tombol "Komentari" dengan teks dalam bahasa Inggris
+        try:
+            comment_button = driver.find_element(By.XPATH, "//span[contains(text(), 'Komentari')]")
+        except NoSuchElementException:
+            pass
 
-        comment_button = driver.find_element(By.XPATH, "//span[contains(text(), 'Komentari')]")
+        # Jika tombol "Komentari" dalam bahasa Inggris tidak ditemukan, coba dalam bahasa Indonesia
+        if comment_button is None:
+            try:
+                comment_button = driver.find_element(By.XPATH, "//span[contains(text(), 'Comment')]")
+            except NoSuchElementException:
+                # Jika tidak berhasil, coba mencari tombol lain
+                comment_button = driver.find_element(By.XPATH, "//a[contains(@data-sigil, 'feed-ufi-focus')]")
+
         comment_button.click()
-
-        # Tunggu 1 detik
         time.sleep(1)
 
-        # Menunggu hingga input komentar muncul
-        WebDriverWait(driver, 6).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[contenteditable='true']")))
-
-        comment_input = driver.find_element(By.CSS_SELECTOR, "div[contenteditable='true']")
+        # Coba menemukan input komentar dengan atribut CSS
+        try:
+            comment_input = driver.find_element(By.CSS_SELECTOR, "div[contenteditable='true']")
+        except NoSuchElementException:
+            # Jika tidak berhasil, coba mencari input komentar lain
+            comment_input = driver.find_element(By.ID, "composerInput")
 
         for comment in comments:
             for char in comment:
                 comment_input.send_keys(char)
-                # Tunggu antara 0.01 hingga 0.1 detik (secara acak)
                 time.sleep(random.uniform(0.001, 0.01))
             comment_input.send_keys(Keys.RETURN)
 
-            # Tunggu 3 detik setelah mengirim komentar
             time.sleep(3)
             print(Fore.GREEN + f"Komentar '{comment}' telah ditambahkan!" + Style.RESET_ALL)
 
     except Exception as e:
-        print(Fore.RED + f"Tidak dapat menemukan tombol komentar atau postingan tidak ditemukan: {str(e)}" + Style.RESET_ALL)
+        print(Fore.RED + f"Tidak dapat menemukan tombol atau input komentar: {str(e)}" + Style.RESET_ALL)
 
 
 if __name__ == "__main__":
     akun = [
-    # ("mediaku@fifi.luth.my.id", "Baru123*#"),
-    ("uwjatofyatzftd@northsixty.com", "Baru123*#"),
+    ("mediaku@fifi.luth.my.id", "Baru123*#"),
+    # ("uwjatofyatzftd@northsixty.com", "Baru123*#")
     ("putri@strapi.luth.my.id", "Baru123*#"),
-    ("nipoqafe.upamiban@labworld.org", "Baru123*#")
-]
-
-    postingan = [
-        "https://web.facebook.com/permalink.php?story_fbid=pfbid037aP4GQAmiRugzkzRknL59Jku5h1jGpFTzTkcNxjLFeNg7JmSnoDuzFTeoq28TVv7l&id=104130165689778"
+    ("nipoqafe.upamiban@labworld.org", "Baru123*#"),
+    ("sabilalala159@gmail.com","@12345678"),
+    ("kamengpanggang@gmail.com","Bireuen12"),
+    ("usahadagang316@gmail.com","Bireuen12"),
+    ("ahrd3043@gmail.com","Bireuen12"),
+    ("mamanoraaaa12@gmail.com","Bireuen12"),
+    ("mamabayuuuu12@gmail.com","Bireuen12"),
+    ("hantulauttt12@gmail.com","Bireuen12"),
+    ("hantumatahari722@gmail.com","Bireuen12"),
+    ("hantubulan3@gmail.com.","Bireuen12"),
+    ("rumahhantu180@gmail.com","Bireuen12"),
+    ("mamaliaaaa12@gmail.com","Bireuen12"),
+    ("kamengbulut6@gmail.com","Bireuen12"),
+    ("Cazorlas386@gmail.com","Bireuen12"),
+    ("nisac4987@gmail.com","Bireuen12"),
+    ("kamenghanco@gmail.com","Bireuen12"),
+    ("kamengapui@gmail.com","Bireuen12"),
+    ("fitriwahyunibir11@gmail.com","Bireuen12"),
+    ("kopidarat875@gmail.com","Bireuen12"),
+    ("riskiamoy06@gmail.com","@12345678"),
+    ("kucingmanisku187@gmail.com","Bireuen12"),
+    ("catatanselebritis@gmail.com","Bireuen12"),
+    ("mitagunawan201@gmail.com","Bireuen12"),
+    ("apismaulana1999@gmail.com","Bireuen12"),
+    ("fitriwahyunibir11@gmail.com","Bireuen12"),
+    ("kopidarat875@gmail.com","Bireuen12"),
+    ("rudisaputra1998ml@gmail.com","Bireuen12"),
+    ("Anggamaulana0945@gmail.com","Bireuen12"),
+    ("Sendiriusaha154@gmail.com","Bireuen12"),
+    ("buruangputih@gmail.com","Bireuen12"),
+    ("pasarsiang8@gmail.com","Bireuen12"),
+    ("rudisaputra1998rd@gmail.com","Bireuen12"),
+    ("bellaputri099912@gmail.com","Bireuen12"),
+    ("rezasaputrard603@gmail.com","Bireuen12"),
+    ("mionghitam37@gmail.com","Bireuen12"),
+    ("miongkuneng06@gmail.com","Bireuen12"),
+    ("miongbiru21@gmail.com","Bireuen12"),
+    ("forumartis99@gmail.com","Bireuen12"),
+    ("merahmeong@gmail.com","Bireuen12"),
+    ("hitamcicak59@gmail.com","Bireuen12"),
+    ("dindarizki14912@gmail.com","Bireuen12"),
+    ("mayasari1999jr@gmail.com","Bireuen12"),
+    ("hayatimala733@gmail.com","Bireuen12"),
+    ("daudiskandar076@gmail.com","Bireuen12"),
+    ("nuddinb295@gmail.com","Bireuen12")
     ]
 
-    comments = ["MashaaAllah Indah sekali", "yang belum punya rumah semoga bisa segara punya", "tetap semnagat dalam berkreasi"]
+    postingan = [
+        "https://web.facebook.com/story.php?story_fbid=pfbid028BDkHWU98pSjafT9NHtgmWKrBhJebwceDekSAMtD1AqGZZSzyeztZdrk4VTU1en2l&id=100010124465527&mibextid=Nif5oz&_rdc=1&_rdr"
+    ]
+
+    comments = ["sehat sampai hari H pak",
+                "Gerakan Indonesia lebih baik ;)",
+                "Aminnn",
+                "Aman Indonesia",
+                "mantap",
+                "Anies Muhaimin",
+                "Pasangan Perubahan",
+                "semoga tersemogakan",
+                "amin 2024",
+                "juara",
+                "aminnnnn",
+                "amin yang terbaik",
+                "pilihan terbaik",
+                "aminnnnn",
+                "bestttt",
+                "semoga bisa memimpin negeri",
+                "aminn",
+                "bersama amin kita bisaa",
+                "aminnn",
+                "aman aminnnn",
+                "amin menuju perubahan",
+                "terbaikk gus",
+                "sukses terus",
+                "semangat pak",
+                "perubahan2024",
+                "selalu di hati",
+                "presiden kita 2024",
+                "pantang mundur demi kesuksesan",
+                "yok bisa 2024",
+                "patriot kita",
+                " selalu di hati",
+                "merdeka",
+                "gas berjuang 2024",
+                "Semoga sukses selalu",
+                "Amiin, semoga berhasil!",
+                "Teruskan perjuangan!",
+                "Sukses adalah hasil kerja keras",
+                "Kita bersama menuju perubahan",
+                "Pantang menyerah!",
+                "Semangat terus, Pak!",
+                "Kita optimis 2024!",
+                "Kami selalu mendukung Anda",
+                "Perubahan yang kita butuhkan",
+                "Sukses untuk Indonesia!",
+                "Kita bangga memiliki sosok seperti Anda",
+                "Ayo, menuju perubahan!",
+                "Teruskan perjuangan, Pak!",
+                "Patriot sejati!", "mantappp"]
 
     for i, (username, password) in enumerate(akun):
         driver = login_to_facebook(username, password)
